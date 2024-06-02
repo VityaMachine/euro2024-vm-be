@@ -5,6 +5,8 @@ const UserModel = require("../models/user.model");
 class AuthValidators {
   async validateSignUp(req, res, next) {
     const newUserSchema = Joi.object({
+      firstname: Joi.string().min(3).max(30).required(),
+      secondname: Joi.string().min(3).max(30).required(),
       username: Joi.string().min(5).max(30).required(),
       email: Joi.string().email().required(),
       password: Joi.string()
@@ -14,8 +16,7 @@ class AuthValidators {
         .min(8)
         .max(25)
         .required(),
-      firstname: Joi.string().min(5).max(30).required(),
-      secondname: Joi.string().min(5).max(30).required(),
+
       birthdate: Joi.string().length(10),
     });
 

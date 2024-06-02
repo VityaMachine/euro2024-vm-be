@@ -31,12 +31,12 @@ class AuthController {
       const respData = {
         id: newUser.id,
         username: newUser.username,
+        email: newUser.email,
       };
 
       await sendEmailVerification(newUser.email, newUser);
 
-      // console.log(mailResult);
-
+  
       res.status(201).json(respData);
     } catch (error) {
       next(error);

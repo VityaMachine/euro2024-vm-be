@@ -10,6 +10,22 @@ const UserModel = sequelize.define(
       primaryKey: true,
       allowNull: false,
     },
+    firstname: {
+      type: Sequelize.STRING(30),
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      },
+    },
+    secondname: {
+      type: Sequelize.STRING(30),
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      },
+    },
     username: {
       type: Sequelize.STRING(30),
       allowNull: false,
@@ -31,22 +47,6 @@ const UserModel = sequelize.define(
     password: {
       type: Sequelize.STRING,
       allowNull: false,
-    },
-    firstname: {
-      type: Sequelize.STRING(30),
-      allowNull: false,
-      validate: {
-        notNull: true,
-        notEmpty: true,
-      },
-    },
-    secondname: {
-      type: Sequelize.STRING(30),
-      allowNull: false,
-      validate: {
-        notNull: true,
-        notEmpty: true,
-      },
     },
 
     birthdate: {

@@ -6,6 +6,8 @@ const UserModel = require("./api/models/user.model");
 
 const authRouter = require("./api/routers/auth.router");
 const userRouter = require("./api/routers/user.router");
+const fixturesRouter = require("./api/routers/af.fixtures.router");
+const standingsRouter = require('./api/routers/af.standings.router');
 
 class Server {
   constructor() {
@@ -38,6 +40,8 @@ class Server {
   initRoutes() {
     this.server.use("/users", userRouter);
     this.server.use("/auth", authRouter);
+    this.server.use("/fixtures", fixturesRouter);
+    this.server.use("/standings", standingsRouter);
   }
 
   intiErrorHandlers() {
