@@ -9,7 +9,7 @@ authRouter.post(
   authController.signUp
 );
 
-authRouter.patch(
+authRouter.post(
   "/sign-in",
   authValidators.validateSignIn,
   authController.signIn
