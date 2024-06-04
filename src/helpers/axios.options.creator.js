@@ -5,6 +5,7 @@ const axiosOptionsCreator = (method, url, reqParams) => ({
   url: `https://api-football-v1.p.rapidapi.com/v3/${url}`,
   params: {
     ...reqParams,
+    timezone: 'Europe/Kiev',
   },
   headers: {
     "x-rapidapi-key": process.env.RA_APIKEY,
