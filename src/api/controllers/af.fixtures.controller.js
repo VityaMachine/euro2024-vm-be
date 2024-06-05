@@ -2,6 +2,8 @@ const axios = require("axios");
 const axiosOptionsCreator = require("../../helpers/axios.options.creator");
 const fixtureParser = require("../../utils/parsers/fixtures.parser");
 
+// const fixturesJSON = require('../../temp/fixtures.json');
+
 require("dotenv").config();
 
 class FixturesController {
@@ -9,6 +11,7 @@ class FixturesController {
     const reqOptions = axiosOptionsCreator("GET", "fixtures", {
       league: process.env.RA_LEAGUE,
       season: process.env.RA_SEASON,
+      timezone: 'Europe/Kiev',
     });
 
     try {
@@ -19,6 +22,7 @@ class FixturesController {
       const parsedData = fixtureParser(data);
 
       return res.json(parsedData);
+      // return res.json(fixturesJSON);
     } catch (error) {
       next(error);
     }
