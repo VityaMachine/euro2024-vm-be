@@ -20,7 +20,7 @@ async function sendEmailVerification(recipient, user) {
     subject: "Сonfirmation of registration on the vm-football.com",
     html: `<div>
                 <strong>Hello ${user.username}</strong>
-                 <div>To confirm your email, <a href="http://localhost:${process.env.PORT}/users/verify/${user.verificationToken}">click here</a></div>
+                 <div>To confirm your email, <a href="https://euro2024-vm-be.onrender.com/users/verify/${user.verificationToken}">click here</a></div>
               </div>`,
   });
 }
