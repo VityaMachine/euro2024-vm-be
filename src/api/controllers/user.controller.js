@@ -42,7 +42,7 @@ class UserController {
     );
 
     return res.send(
-      `<div>Dear ${user.username}, your account is confirmed, now u can go to <a href="http://google.com">main page</a></div>`
+      `<h2>Dear ${user.username}, your account is confirmed, now u can go to <a href="https://vm-euro2024.vercel.app/">main page</a></h2>`
     );
   }
 }
