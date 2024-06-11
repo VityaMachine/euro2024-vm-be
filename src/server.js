@@ -3,11 +3,13 @@ const cors = require("cors");
 require("dotenv").config();
 
 const UserModel = require("./api/models/user.model");
+const PredictionModel = require('./api/models/prediction.model');
 
 const authRouter = require("./api/routers/auth.router");
 const userRouter = require("./api/routers/user.router");
 const fixturesRouter = require("./api/routers/af.fixtures.router");
 const standingsRouter = require('./api/routers/af.standings.router');
+const predictionRouter = require("./api/routers/predictions.router");
 
 class Server {
   constructor() {
@@ -34,6 +36,7 @@ class Server {
 
   initSequelizeModels() {
     UserModel.sync();
+    PredictionModel.sync();
     // UserModel.sync({force: true});
   }
 
@@ -42,6 +45,7 @@ class Server {
     this.server.use("/auth", authRouter);
     this.server.use("/fixtures", fixturesRouter);
     this.server.use("/standings", standingsRouter);
+    this.server.use("/predictions", predictionRouter)
   }
 
   intiErrorHandlers() {
