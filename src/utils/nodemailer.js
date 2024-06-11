@@ -29,8 +29,8 @@ async function sendEmailVerification(recipient, user) {
     to: recipient,
     subject: "Сonfirmation of registration on the vm-football.com",
     html: `<div>
-                <h3><strong>Hello ${user.username}</strong><h3>
-                 <h5>To confirm your email, <a href="https://euro2024-vm-be.onrender.com/users/verify/${user.verificationToken}">click here</a></h5>
+                <h2><strong>Hello ${user.username}</strong><h2>
+                 <h3>To confirm your email, <a href="https://euro2024-vm-be.onrender.com/users/verify/${user.verificationToken}">click here</a></h3>
               </div>`,
   });
 }
