@@ -9,7 +9,7 @@ const predictionResultsCalculator = require("../../utils/prediction.result.calcu
 
 require("dotenv").config();
 
-const tempFixtData = require("../../temp/fixtures.json");
+// const tempFixtData = require("../../temp/fixtures.json");
 
 class PredictionController {
   async getPotentialMatches(req, res, next) {
@@ -23,10 +23,10 @@ class PredictionController {
     });
 
     try {
-      // const fixtDataResp = await axios.request(reqOptions);
-      // const fixtData = fixtDataResp.data.response;
-      // const parsedFixtures = fixtureParser(fixtData);
-      const parsedFixtures = [...tempFixtData];
+      const fixtDataResp = await axios.request(reqOptions);
+      const fixtData = fixtDataResp.data.response;
+      const parsedFixtures = fixtureParser(fixtData);
+      // const parsedFixtures = [...tempFixtData];
 
       const userPredictions = await PredictionModel.findAll({
         where: { userId: user.id },

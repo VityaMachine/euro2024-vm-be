@@ -8,7 +8,7 @@ const fixtureParser = require("../../utils/parsers/fixtures.parser");
 
 require("dotenv").config();
 
-const tempFixtData = require("../../temp/fixtures.json");
+// const tempFixtData = require("../../temp/fixtures.json");
 
 class PredictionValidators {
   async validateNewPrediction(req, res, next) {
@@ -35,11 +35,11 @@ class PredictionValidators {
     });
 
     try {
-      // const fixtDataResp = await axios.request(reqOptions);
-      // const fixtData = fixtDataResp.data.response;
-      // const parsedFixtures = fixtureParser(fixtData);
+      const fixtDataResp = await axios.request(reqOptions);
+      const fixtData = fixtDataResp.data.response;
+      const parsedFixtures = fixtureParser(fixtData);
 
-      const parsedFixtures = [...tempFixtData];
+      // const parsedFixtures = [...tempFixtData];
 
       const userPredictions = await PredictionModel.findAll({
         where: { userId: user.id },
