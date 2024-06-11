@@ -24,17 +24,15 @@ async function sendEmailVerification(recipient, user) {
   //             </div>`,
   // });
 
-
-    await transporter.sendMail({
+  await transporter.sendMail({
     from: process.env.MAIL_USER,
     to: recipient,
     subject: "Сonfirmation of registration on the vm-football.com",
     html: `<div>
-                <strong>Hello ${user.username}</strong>
-                 <div>To confirm your email, <a href="http://localhost:80/users/verify/${user.verificationToken}">click here</a></div>
+                <h3><strong>Hello ${user.username}</strong><h3>
+                 <h5>To confirm your email, <a href="https://euro2024-vm-be.onrender.com/users/verify/${user.verificationToken}">click here</a></h5>
               </div>`,
   });
-
 }
 
 module.exports = sendEmailVerification;
