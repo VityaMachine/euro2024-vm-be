@@ -1,4 +1,5 @@
 const PredictionModel = require("../models/prediction.model");
+const UserModel = require("../models/user.model");
 
 const { v4: uuidv4 } = require("uuid");
 
@@ -9,7 +10,7 @@ const predictionResultsCalculator = require("../../utils/prediction.result.calcu
 
 require("dotenv").config();
 
-// const tempFixtData = require("../../temp/fixtures.json");
+const tempFixtData = require("../../temp/fixtures.json");
 
 class PredictionController {
   async getPotentialMatches(req, res, next) {
@@ -60,8 +61,6 @@ class PredictionController {
       }));
 
       const calculatedPredicions = predictionsData.map((predictionItem) => {
-
-
         // console.log(predictionItem);
 
         return {
@@ -106,6 +105,151 @@ class PredictionController {
       console.log(newPredictionRespData);
 
       return res.send(newPredictionRespData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getRankingTable(req, res, next) {
+    const reqOptions = axiosOptionsCreator("GET", "fixtures", {
+      league: process.env.RA_LEAGUE,
+      season: process.env.RA_SEASON,
+      timezone: "Europe/Kiev",
+      status: "NS",
+    });
+
+    try {
+      // const fixtDataResp = await axios.request(reqOptions);
+      // const fixtData = fixtDataResp.data.response;
+      // const parsedFixtures = fixtureParser(fixtData);
+      const parsedFixtures = [...tempFixtData];
+
+      const usersPredictions = await PredictionModel.findAll({});
+      const usersData = await UserModel.findAll({});
+
+      // const predictionsWithUsers = usersPredictions.map((prediction) => {
+      //   const userData = usersData
+      //     .find((user) => user.id === prediction.userId)
+
+      //     const withPredictionData = {
+      //       ...prediction.dataValues,
+      //       userFirstName: userData.firstname,
+      //       userLasstName: userData.secondname,
+      //       userUserName: userData.username
+      //     }
+
+      //   return withPredictionData;
+      // });
+
+      const predictionsWithResults = usersPredictions.map((prediction) => {
+        const predFixtData = parsedFixtures.find(
+          (fixture) => fixture.fixtureId === prediction.fixtureId
+        );
+
+        return {
+          ...prediction.dataValues,
+          matchStatus: predFixtData.statusShort,
+          matchGoalsHome: predFixtData.homeTeamGoalsFT,
+          matchGoalsAway: predFixtData.awayTeamGoalsFT,
+        };
+      });
+
+      const finishedMatches = predictionsWithResults.filter(
+        (item) => item.matchStatus === "FT"
+      );
+
+      const predictionsWithPts = finishedMatches.map((item) => {
+        const calculatedResult = predictionResultsCalculator(
+          item.matchGoalsHome,
+          item.matchGoalsAway,
+          item.homeTeamGoals,
+          item.awayTeamGoals
+        );
+
+        return {
+          ...item,
+          predictionPts: calculatedResult.points,
+          predictionText: calculatedResult.text,
+        };
+      });
+
+      const usersIdsWithPredictions = predictionsWithPts
+        .map((item) => item.userId)
+        .filter((item, i, ar) => ar.indexOf(item) === i);
+
+      const byUsersPredictions = usersIdsWithPredictions.map((item) => {
+        const userPred = predictionsWithPts.filter(
+          (pred) => pred.userId === item
+        );
+
+        return {
+          userId: item,
+          userPredData: {
+            exactScore: userPred.filter((item) => item.predictionPts === 3)
+              .length,
+            draw: userPred.filter((item) => item.predictionPts === 1.75).length,
+            goalsDIff: userPred.filter((item) => item.predictionPts === 1.5)
+              .length,
+            result: userPred.filter((item) => item.predictionPts === 1).length,
+            sumGoals: userPred.filter((item) => item.predictionPts === 0.25)
+              .length,
+            noMatched: userPred.filter((item) => item.predictionPts === 0)
+              .length,
+          },
+        };
+      });
+
+      const totalPtsByUsers = byUsersPredictions.map((item) => ({
+        ...item,
+        userPredData: {
+          ...item.userPredData,
+          total:
+            item.userPredData.exactScore * 3 +
+            item.userPredData.draw * 1.75 +
+            item.userPredData.goalsDIff * 1.5 +
+            item.userPredData.result * 1 +
+            item.userPredData.result * 0.25,
+        },
+      }));
+
+      const totalPtsByUsersWithNames = totalPtsByUsers.map((item) => {
+        const userDetails = usersData.find((user) => (user.id = item.userId));
+
+        const userRespData = {
+          userFirstName: userDetails.firstname,
+          userLastName: userDetails.secondname,
+          userName: userDetails.username,
+        };
+
+        return {
+          ...userRespData,
+          ...item,
+        };
+      });
+
+
+      // sorting
+
+      totalPtsByUsersWithNames.sort(
+        (a, b) => b.userPredData.sumGoals - a.userPredData.sumGoals
+      );
+      totalPtsByUsersWithNames.sort(
+        (a, b) => b.userPredData.result - a.userPredData.result
+      );
+      totalPtsByUsersWithNames.sort(
+        (a, b) => b.userPredData.goalsDIff - a.userPredData.goalsDIff
+      );
+      totalPtsByUsersWithNames.sort(
+        (a, b) => b.userPredData.draw - a.userPredData.draw
+      );
+      totalPtsByUsersWithNames.sort(
+        (a, b) => b.userPredData.exactScore - a.userPredData.exactScore
+      );
+      totalPtsByUsersWithNames.sort(
+        (a, b) => b.userPredData.total - a.userPredData.total
+      );
+
+      return res.json(totalPtsByUsersWithNames);
     } catch (error) {
       next(error);
     }

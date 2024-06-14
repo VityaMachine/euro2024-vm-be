@@ -19,4 +19,10 @@ predictionRouter.get(
   predictionController.getPotentialMatches
 );
 
+predictionRouter.get(
+  "/table",
+  authController.authorize,
+  predictionController.getRankingTable
+);
+
 module.exports = predictionRouter;
