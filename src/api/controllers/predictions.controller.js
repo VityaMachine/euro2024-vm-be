@@ -213,7 +213,7 @@ class PredictionController {
       }));
 
       const totalPtsByUsersWithNames = totalPtsByUsers.map((item) => {
-        const userDetails = usersData.find((user) => (user.id = item.userId));
+        const userDetails = usersData.find((user) => user.id === item.userId);
 
         const userRespData = {
           userFirstName: userDetails.firstname,
@@ -226,7 +226,6 @@ class PredictionController {
           ...item,
         };
       });
-
 
       // sorting
 
