@@ -20,7 +20,7 @@ class PredictionController {
       league: process.env.RA_LEAGUE,
       season: process.env.RA_SEASON,
       timezone: "Europe/Kiev",
-      status: "NS",
+      // status: "NS",
     });
 
     try {
