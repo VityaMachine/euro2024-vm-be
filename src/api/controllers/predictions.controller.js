@@ -115,7 +115,7 @@ class PredictionController {
       league: process.env.RA_LEAGUE,
       season: process.env.RA_SEASON,
       timezone: "Europe/Kiev",
-      status: "NS",
+      // status: "NS",
     });
 
     try {
@@ -127,19 +127,6 @@ class PredictionController {
       const usersPredictions = await PredictionModel.findAll({});
       const usersData = await UserModel.findAll({});
 
-      // const predictionsWithUsers = usersPredictions.map((prediction) => {
-      //   const userData = usersData
-      //     .find((user) => user.id === prediction.userId)
-
-      //     const withPredictionData = {
-      //       ...prediction.dataValues,
-      //       userFirstName: userData.firstname,
-      //       userLasstName: userData.secondname,
-      //       userUserName: userData.username
-      //     }
-
-      //   return withPredictionData;
-      // });
 
       const predictionsWithResults = usersPredictions.map((prediction) => {
         const predFixtData = parsedFixtures.find(
