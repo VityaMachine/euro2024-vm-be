@@ -119,10 +119,10 @@ class PredictionController {
     });
 
     try {
-      // const fixtDataResp = await axios.request(reqOptions);
-      // const fixtData = fixtDataResp.data.response;
-      // const parsedFixtures = fixtureParser(fixtData);
-      const parsedFixtures = [...tempFixtData];
+      const fixtDataResp = await axios.request(reqOptions);
+      const fixtData = fixtDataResp.data.response;
+      const parsedFixtures = fixtureParser(fixtData);
+      // const parsedFixtures = [...tempFixtData];
 
       const usersPredictions = await PredictionModel.findAll({});
       const usersData = await UserModel.findAll({});
