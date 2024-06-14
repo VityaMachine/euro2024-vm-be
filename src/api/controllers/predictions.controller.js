@@ -195,7 +195,7 @@ class PredictionController {
             item.userPredData.draw * 1.75 +
             item.userPredData.goalsDIff * 1.5 +
             item.userPredData.result * 1 +
-            item.userPredData.result * 0.25,
+            item.userPredData.sumGoals * 0.25,
         },
       }));
 
