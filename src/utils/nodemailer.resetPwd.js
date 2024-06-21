@@ -21,7 +21,7 @@ async function sendResetPwdVerification(recipient, user) {
     html: `<div>
                 <h2><strong>Hello ${user.username}</strong><h2>
                  <h3>To confirm reset your password 
-                  <a href="https://euro2024-vm-be.onrender.com/auth/reset/${user.verificationToken}">click here</a>
+                  <a href="https://vm-euro2024.vercel.app/auth/reset/${user.verificationToken}">click here</a>
                  </h3>
               </div>`,
   });
