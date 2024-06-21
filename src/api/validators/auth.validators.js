@@ -61,6 +61,82 @@ class AuthValidators {
 
     next();
   }
+
+  async validateResetPassword(req, res, next) {
+    const data = req.body;
+
+    const validateSchema = Joi.object({
+      email: Joi.string().email().required(),
+    });
+
+    const validationResult = validateSchema.validate(data);
+
+    if (validationResult.error) {
+      return res.status(400).send(validationResult.error);
+    }
+
+    try {
+      const targetUser = await UserModel.findOne({
+        where: {
+          email: data.email,
+        },
+      });
+
+      if (!targetUser) {
+        return res.status(404).send({ message: "email is not registered" });
+      }
+
+      if (!targetUser.isVerified) {
+        return res.status(400).send({ message: "user is not verified" });
+      }
+
+      req.user = targetUser;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async validateUpdatePassword(req, res, next) {
+    const data = req.body;
+
+    const newPwdSchema = Joi.object({
+      password: Joi.string()
+        .pattern(
+          /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+        )
+        .min(8)
+        .max(25)
+        .required(),
+
+      resetToken: Joi.string().required(),
+    });
+
+    const validationResult = newPwdSchema.validate(data);
+
+    if (validationResult.error) {
+      return res.status(400).send(validationResult.error);
+    }
+
+    try {
+      const targetUser = await UserModel.findOne({
+        where: {
+          verificationToken: data.resetToken,
+        },
+      });
+
+      if (!targetUser) {
+        return res
+          .status(404)
+          .send({ message: "Wrong reset token. Target user not found" });
+      }
+
+      req.user = targetUser;
+      next();
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthValidators();

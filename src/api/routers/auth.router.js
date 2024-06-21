@@ -17,4 +17,8 @@ authRouter.post(
 
 authRouter.patch("/logout", authController.authorize, authController.logout);
 
+authRouter.post("/reset", authValidators.validateResetPassword, authController.resetPassword)
+
+authRouter.patch("/update", authValidators.validateUpdatePassword, authController.updatePassword)
+
 module.exports = authRouter;

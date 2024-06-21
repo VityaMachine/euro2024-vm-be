@@ -4,7 +4,8 @@ const UserModel = require("../models/user.model");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
-const sendEmailVerification = require("../../utils/nodemailer");
+const sendEmailVerification = require("../../utils/nodemailer.signUp");
+const sendResetPwdVerification = require("../../utils/nodemailer.resetPwd");
 
 require("dotenv").config();
 
@@ -36,7 +37,6 @@ class AuthController {
 
       await sendEmailVerification(newUser.email, newUser);
 
-  
       res.status(201).json(respData);
     } catch (error) {
       next(error);
@@ -153,6 +153,76 @@ class AuthController {
     } catch (error) {
       next(error);
     }
+  }
+
+  async resetPassword(req, res, next) {
+    const user = req.user.dataValues;
+
+    const resetToken = uuidv4();
+
+    try {
+      await UserModel.update(
+        {
+          verificationToken: resetToken,
+        },
+        {
+          where: {
+            id: user.id,
+          },
+        }
+      );
+
+      const updatedUser = await UserModel.findOne({
+        where: {
+          id: user.id,
+        },
+      });
+
+      const respData = {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+      };
+
+      await sendResetPwdVerification(updatedUser.email, updatedUser);
+
+      return res.send(respData);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updatePassword(req, res, next) {
+    const data = req.body;
+    const user = req.user;
+
+    const newPwdHash = await bcryptjs.hash(
+      data.password,
+      Number(process.env.PWD_COST)
+    );
+
+    try {
+      await UserModel.update(
+        {
+          password: newPwdHash,
+          verificationToken: null,
+          token: null,
+        },
+        {
+          where: {
+            id: user.id,
+          },
+        }
+      );
+
+      return res.send({
+        message: "Password successfuly changed",
+      });
+    } catch (error) {
+      next(error);
+    }
+
+    return res.send(newPwdHash);
   }
 }
 
