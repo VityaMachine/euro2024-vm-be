@@ -127,7 +127,6 @@ class PredictionController {
       const usersPredictions = await PredictionModel.findAll({});
       const usersData = await UserModel.findAll({});
 
-
       const predictionsWithResults = usersPredictions.map((prediction) => {
         const predFixtData = parsedFixtures.find(
           (fixture) => fixture.fixtureId === prediction.fixtureId
@@ -142,7 +141,10 @@ class PredictionController {
       });
 
       const finishedMatches = predictionsWithResults.filter(
-        (item) => item.matchStatus === "FT"
+        (item) =>
+          item.matchStatus === "FT" ||
+          item.matchStatus === "AET" ||
+          item.matchStatus === "PEN"
       );
 
       const predictionsWithPts = finishedMatches.map((item) => {
@@ -213,6 +215,8 @@ class PredictionController {
           ...item,
         };
       });
+
+      // return res.send(finishedMatches)
 
       // sorting
 
